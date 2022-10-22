@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">SQLiteLogin</string>
+    <string name="home_screen_text">Welcome!\n\n\n\nYou have successfully logged in</string>
+</resources>
