@@ -1,5 +1,7 @@
 package com.ojs.sqlitelogin;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -10,6 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.ojs.sqlitelogin.models.User;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +22,7 @@ public class UserDAO extends SQLiteOpenHelper {
     public static final String COLUMN_ID = "ID";
     public static final String COLUMN_USERNAME = "USERNAME";
     public static final String COLUMN_PASSWORD = "PASSWORD";
+    public static final String COLUMN_SALT = "SALT";
 
     public UserDAO(@Nullable Context context) {
         super(context, "ice4.db", null, 1);
@@ -29,7 +33,8 @@ public class UserDAO extends SQLiteOpenHelper {
         String createTableStatement = "CREATE TABLE " + USER_TABLE + " ("
                 + COLUMN_ID  + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_USERNAME + " TEXT, "
-                + COLUMN_PASSWORD + " TEXT)";
+                + COLUMN_PASSWORD + " TEXT, "
+                + COLUMN_SALT + " TEXT)";
         db.execSQL(createTableStatement);
     }
 
@@ -44,6 +49,7 @@ public class UserDAO extends SQLiteOpenHelper {
 
         cv.put(COLUMN_USERNAME, user.getUsername().trim());
         cv.put(COLUMN_PASSWORD, user.getPassword());
+        cv.put(COLUMN_SALT, user.getSalt());
 
         long insert = db.insert(USER_TABLE, null, cv);
         if(insert == -1){
@@ -68,8 +74,9 @@ public class UserDAO extends SQLiteOpenHelper {
                 int userID = cursor.getInt(0);
                 String username = cursor.getString(1);
                 String userPassword = cursor.getString(2);
+                String userSalt = cursor.getString(2);
 
-                User user = new User(userID, username, userPassword);
+                User user = new User(userID, username, userPassword, userSalt);
                 returnList.add(user);
             } while (cursor.moveToNext());
         }
@@ -130,8 +137,11 @@ public class UserDAO extends SQLiteOpenHelper {
             // id is at index 0 so start from 1
             String retrievedUsername = cursor.getString(1);
             String retrievedPassword = cursor.getString(2);
+            String retrievedSalt = cursor.getString(3);
 
-            if(username.equals(retrievedUsername) && password.equals(retrievedPassword)){
+            //****
+            System.console().printf("comparerHash:" + hashPassword(retrievedPassword, retrievedSalt));
+            if(username.equals(retrievedUsername) && password.equals(hashPassword(retrievedPassword, retrievedSalt))){
                 isSuccessful = true;
             }
             else{
@@ -147,6 +157,11 @@ public class UserDAO extends SQLiteOpenHelper {
 
         return isSuccessful;
 
+    }
+
+    private String hashPassword(String password, String salt) {
+        Encryption encryption = new Encryption();
+        return encryption.get_SHA_512_SecurePassword(password, salt);
     }
 
 //===

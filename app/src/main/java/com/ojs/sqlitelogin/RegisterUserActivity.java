@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import com.ojs.sqlitelogin.models.User;
 
+import java.security.NoSuchAlgorithmException;
+
 public class RegisterUserActivity extends AppCompatActivity {
 
     // Global declarations
@@ -40,8 +42,12 @@ public class RegisterUserActivity extends AppCompatActivity {
         registerUser_bt.setOnClickListener(v -> {
             if(validateInputs()){
                 if(userDAO.isUsernameUnique(registerUsername_et.getText().toString())){
-                    //**** store only the password hash
-                    //user.setPassword();
+                    // store only the password hash
+                    try {
+                        user.setPassword(hashPassword(registerPassword_et.getText().toString()));
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    }
                     boolean success = userDAO.addOne(user);
                     if(success){
                         login();
@@ -122,6 +128,13 @@ public class RegisterUserActivity extends AppCompatActivity {
         finish();// close the registration activity
         finish();// close the login activity
         startActivity(nw);
+    }
+
+    private String hashPassword(String password) throws NoSuchAlgorithmException {
+        Encryption encryption = new Encryption();
+        String salt = encryption.getSalt();
+        user.setSalt(salt);
+        return encryption.get_SHA_512_SecurePassword(password, salt);
     }
 
 //===

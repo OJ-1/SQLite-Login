@@ -9,6 +9,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.security.NoSuchAlgorithmException;
+
 public class LoginActivity extends AppCompatActivity {
 
     // Global declarations
@@ -83,6 +85,8 @@ public class LoginActivity extends AppCompatActivity {
         loginUsername_et.setText("");
         loginPassword_et.setText("");
     }
+
+
     
 //===
 }
