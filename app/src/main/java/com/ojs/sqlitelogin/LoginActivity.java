@@ -1,3 +1,11 @@
+/*
+    CODE ATTRIBUTION:
+    How to use SQLite on Android
+    https://www.youtube.com/watch?v=312RhjfetP8
+    Source: FreeCodeCamp - Shad Sluiter
+    https://www.youtube.com/user/shadsluiter
+ */
+
 package com.ojs.sqlitelogin;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,9 +43,15 @@ public class LoginActivity extends AppCompatActivity {
 
         // set on click listeners
         signIn_bt.setOnClickListener(v -> {
+            // check that the inputs are valid
             if(isValid()){
-                boolean success = userDAO.attemptLogin(loginUsername_et.getText().toString(), loginPassword_et.getText().toString());
+                // attempt to login
+                boolean success = userDAO.attemptLogin(
+                        loginUsername_et.getText().toString(),
+                        loginPassword_et.getText().toString()
+                );
                 if(success){
+                    // if login is successfull assign the currentUser variable and move the home activity
                     HomeActivity.currentUser = loginUsername_et.getText().toString().substring(0, loginUsername_et.getText().toString().indexOf("@"));
                     Intent nw = new Intent(LoginActivity.this, HomeActivity.class);
                     finish();
@@ -86,7 +100,5 @@ public class LoginActivity extends AppCompatActivity {
         loginPassword_et.setText("");
     }
 
-
-    
 //===
 }

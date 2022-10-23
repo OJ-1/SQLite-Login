@@ -1,3 +1,11 @@
+/*
+    CODE ATTRIBUTION:
+    How to use SQLite on Android
+    https://www.youtube.com/watch?v=312RhjfetP8
+    Source: FreeCodeCamp - Shad Sluiter
+    https://www.youtube.com/user/shadsluiter
+ */
+
 package com.ojs.sqlitelogin;
 
 import androidx.appcompat.app.AppCompatActivity;
